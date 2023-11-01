@@ -90,7 +90,6 @@ pipeline {
             steps {
                 script {
                     sh "docker rmi ${IMAGE_TAG}"
-                    }
                 }
             }
         }
