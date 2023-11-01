@@ -76,7 +76,7 @@ pipeline {
        stage('Remove Images and Containers') {
             steps {
                 script {
-                    sh ('docker rmi $(docker images -q)')
+                    sh ('docker image prune -f && docker container prune -f')
                 }
             }
         }
