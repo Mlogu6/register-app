@@ -73,23 +73,10 @@ pipeline {
             }
        }
 
-       stage('Stop and Remove Containers') {
+       stage('Remove Images and Containers') {
             steps {
                 script {
-                    def containerList = sh(script: "docker ps -a -q --filter ancestor=${IMAGE_TAG}", returnStatus: true).trim()
-                    if (containerList) {
-                        sh "docker rm -f ${containerList}"
-                    } else {
-                        echo "No containers to delete."
-                    }
-                }
-            }
-        }
-
-        stage('Remove Unused Docker Images') {
-            steps {
-                script {
-                    sh "docker rmi ${IMAGE_TAG}"
+                    sh ('docker rmi $(docker images -q)')
                 }
             }
         }
