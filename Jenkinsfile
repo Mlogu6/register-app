@@ -73,6 +73,29 @@ pipeline {
             }
        }
 
+       stage('Stop and Remove Containers') {
+            steps {
+                script {
+                    def stoppedContainers = docker.container.list('-a')
+                    stoppedContainers.each { container ->
+                        docker.container(container.id).stop()
+                        docker.container(container.id).remove(force: true)
+                    }
+                }
+            }
+        }
+
+        stage('Remove Unused Docker Images') {
+            steps {
+                script {
+                    def imagesToDelete = docker.image.list(filter: "dangling=true")
+                    imagesToDelete.each { image ->
+                        docker.image.remove(image.id)
+                    }
+                }
+            }
+        }
+
         stage("Trivy Scan") {
            steps {
                script {
