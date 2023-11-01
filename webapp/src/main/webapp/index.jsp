@@ -32,7 +32,5 @@
   </div>
 
    <h1> Thank You </h1>
-   <br>
-   <h1> Welcome Team </h1>
    
 </form>
