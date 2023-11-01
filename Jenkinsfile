@@ -76,10 +76,11 @@ pipeline {
        stage('Stop and Remove Containers') {
             steps {
                 script {
-                    def stoppedContainers = docker.container.list('-a')
-                    stoppedContainers.each { container ->
-                        docker.container(container.id).stop()
-                        docker.container(container.id).remove(force: true)
+                    def containerList = sh(script: "docker ps -a -q --filter ancestor=${IMAGE_TAG}", returnStatus: true).trim()
+                    if (containerList) {
+                        sh "docker rm -f ${containerList}"
+                    } else {
+                        echo "No containers to delete."
                     }
                 }
             }
@@ -88,9 +89,7 @@ pipeline {
         stage('Remove Unused Docker Images') {
             steps {
                 script {
-                    def imagesToDelete = docker.image.list(filter: "dangling=true")
-                    imagesToDelete.each { image ->
-                        docker.image.remove(image.id)
+                    sh "docker rmi ${IMAGE_TAG}"
                     }
                 }
             }
